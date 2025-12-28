@@ -12,9 +12,13 @@
         <ul class="hexagon-grid-container" id="grid">
             <!-- Hexagons will be injected here -->
         </ul>
+        <div id="last-updated" class="last-updated"></div>
     </div>
 
     <script>
+        // Configuration
+        const REFRESH_INTERVAL_MS = 60000; // 1 minute
+
         async function fetchData() {
             try {
                 const response = await fetch('/api/statuses');
@@ -23,6 +27,7 @@
                 }
                 const data = await response.json();
                 render(data);
+                updateLastUpdated();
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -62,11 +67,17 @@
             });
         }
 
+        function updateLastUpdated() {
+            const el = document.getElementById('last-updated');
+            const now = new Date();
+            el.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+        }
+
         // Fetch data on load
         fetchData();
         
-        // Optional: Refresh every 30 seconds
-        setInterval(fetchData, 30000);
+        // Refresh periodically
+        setInterval(fetchData, REFRESH_INTERVAL_MS);
     </script>
 </body>
 </html>
