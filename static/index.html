@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gatus Monitoring</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@100;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <ul class="hexagon-grid-container" id="grid">
+            <!-- Hexagons will be injected here -->
+        </ul>
+    </div>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/statuses');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                render(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        function render(services) {
+            const container = document.getElementById('grid');
+            container.innerHTML = ''; // Clear existing content
+
+            services.forEach(service => {
+                const result = service.results && service.results.length > 0 ? service.results[0] : null;
+                const isSuccess = result ? result.success : false;
+                const colorClass = isSuccess ? 'hexagon-green' : 'hexagon-red';
+                
+                const li = document.createElement('li');
+                li.className = `hexagon ${colorClass}`;
+                
+                const innerDiv = document.createElement('div');
+                innerDiv.className = 'hexagon-inner';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'hexagon-name';
+                nameSpan.textContent = service.name;
+                
+                innerDiv.appendChild(nameSpan);
+
+                // Optional: Display hostname or other info if available
+                if (result && result.hostname) {
+                     const metricSpan = document.createElement('span');
+                     metricSpan.className = 'hexagon-metric-label';
+                     metricSpan.textContent = result.hostname;
+                     innerDiv.appendChild(metricSpan);
+                }
+
+                li.appendChild(innerDiv);
+                container.appendChild(li);
+            });
+        }
+
+        // Fetch data on load
+        fetchData();
+        
+        // Optional: Refresh every 30 seconds
+        setInterval(fetchData, 30000);
+    </script>
+</body>
+</html>
