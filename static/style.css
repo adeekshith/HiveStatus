@@ -334,3 +334,5 @@ body {
     font-size: 0.9rem;
     color: var(--meta-text);
 }
+
+@import 'group-styles.css';

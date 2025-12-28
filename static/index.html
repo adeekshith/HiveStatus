@@ -9,9 +9,10 @@
 </head>
 <body>
     <div id="app">
-        <ul class="hexagon-grid-container" id="grid">
-            <!-- Hexagons will be injected here -->
-        </ul>
+        <!-- Replaced single grid with a groups container -->
+        <div id="groups-container" class="groups-container">
+            <!-- Groups will be injected here -->
+        </div>
         <div id="last-updated" class="last-updated"></div>
     </div>
 
@@ -33,37 +34,88 @@
             }
         }
 
+        function getGroupName(key) {
+            if (!key) return "Ungrouped";
+            if (key.startsWith('_')) {
+                return "Ungrouped";
+            }
+            const parts = key.split('_');
+            if (parts.length > 0 && parts[0]) {
+                // Capitalize first letter
+                return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+            }
+            return "Ungrouped";
+        }
+
         function render(services) {
-            const container = document.getElementById('grid');
+            const container = document.getElementById('groups-container');
             container.innerHTML = ''; // Clear existing content
 
+            // Group services
+            const groups = {};
             services.forEach(service => {
-                const result = service.results && service.results.length > 0 ? service.results[0] : null;
-                const isSuccess = result ? result.success : false;
-                const colorClass = isSuccess ? 'hexagon-green' : 'hexagon-red';
-                
-                const li = document.createElement('li');
-                li.className = `hexagon ${colorClass}`;
-                
-                const innerDiv = document.createElement('div');
-                innerDiv.className = 'hexagon-inner';
-                
-                const nameSpan = document.createElement('span');
-                nameSpan.className = 'hexagon-name';
-                nameSpan.textContent = service.name;
-                
-                innerDiv.appendChild(nameSpan);
-
-                // Optional: Display hostname or other info if available
-                if (result && result.hostname) {
-                     const metricSpan = document.createElement('span');
-                     metricSpan.className = 'hexagon-metric-label';
-                     metricSpan.textContent = result.hostname;
-                     innerDiv.appendChild(metricSpan);
+                const groupName = getGroupName(service.key || service.name); // Fallback to name if key missing
+                if (!groups[groupName]) {
+                    groups[groupName] = [];
                 }
+                groups[groupName].push(service);
+            });
 
-                li.appendChild(innerDiv);
-                container.appendChild(li);
+            // Sort group names (Ungrouped last, others alphabetical)
+            const sortedGroupNames = Object.keys(groups).sort((a, b) => {
+                if (a === 'Ungrouped') return 1;
+                if (b === 'Ungrouped') return -1;
+                return a.localeCompare(b);
+            });
+
+            sortedGroupNames.forEach(groupName => {
+                const groupServices = groups[groupName];
+                
+                // Create Details Element
+                const details = document.createElement('details');
+                details.className = 'group-section';
+                details.open = true; // Open by default
+
+                // Create Summary
+                const summary = document.createElement('summary');
+                summary.textContent = groupName;
+                details.appendChild(summary);
+
+                // Create Grid Container for this group
+                const ul = document.createElement('ul');
+                ul.className = 'hexagon-grid-container';
+
+                // Render Hexagons for this group
+                groupServices.forEach(service => {
+                    const result = service.results && service.results.length > 0 ? service.results[0] : null;
+                    const isSuccess = result ? result.success : false;
+                    const colorClass = isSuccess ? 'hexagon-green' : 'hexagon-red';
+                    
+                    const li = document.createElement('li');
+                    li.className = `hexagon ${colorClass}`;
+                    
+                    const innerDiv = document.createElement('div');
+                    innerDiv.className = 'hexagon-inner';
+                    
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'hexagon-name';
+                    nameSpan.textContent = service.name;
+                    
+                    innerDiv.appendChild(nameSpan);
+
+                    if (result && result.hostname) {
+                         const metricSpan = document.createElement('span');
+                         metricSpan.className = 'hexagon-metric-label';
+                         metricSpan.textContent = result.hostname;
+                         innerDiv.appendChild(metricSpan);
+                    }
+
+                    li.appendChild(innerDiv);
+                    ul.appendChild(li);
+                });
+
+                details.appendChild(ul);
+                container.appendChild(details);
             });
         }
 
