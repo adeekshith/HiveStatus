@@ -197,40 +197,46 @@ body {
     word-break: break-word;
 }
 
-/* Media Queries - Controlling Widths for Centered Grid */
-@media (min-width: 1920px) {
-	.hexagon-grid-container { width: 1600px; }
-    .group-section summary { width: 1600px; }
+/* Media Queries - Exact widths for N, N-1 Honeycomb Packing */
+@media (min-width: 2560px) {
+	.hexagon-grid-container { width: 2160px; }
+    .group-section summary { width: 2160px; }
+	.hexagon:nth-child(29n+16) { margin-left: 74px; }
+}
+
+@media (max-width: 2559px) and (min-width: 1920px) {
+	.hexagon-grid-container { width: 1584px; }
+    .group-section summary { width: 1584px; }
 	.hexagon:nth-child(21n+12) { margin-left: 74px; }
 }
 
 @media (max-width: 1919px) and (min-width: 1280px) {
-	.hexagon-grid-container { width: 1100px; }
-    .group-section summary { width: 1100px; }
-	.hexagon:nth-child(14n+8) { margin-left: 74px; }
+	.hexagon-grid-container { width: 1008px; }
+    .group-section summary { width: 1008px; }
+	.hexagon:nth-child(13n+8) { margin-left: 74px; }
 }
 
 @media (max-width: 1279px) and (min-width: 1024px) {
-	.hexagon-grid-container { width: 960px; }
-    .group-section summary { width: 960px; }
-	.hexagon:nth-child(12n+7) { margin-left: 74px; }
+	.hexagon-grid-container { width: 864px; }
+    .group-section summary { width: 864px; }
+	.hexagon:nth-child(11n+7) { margin-left: 74px; }
 }
 
 @media (max-width: 1023px) and (min-width: 781px) {
-	.hexagon-grid-container { width: 780px; }
-    .group-section summary { width: 780px; }
+	.hexagon-grid-container { width: 720px; }
+    .group-section summary { width: 720px; }
 	.hexagon:nth-child(9n+6) { margin-left: 74px; }
 }
 
 @media (max-width: 780px) and (min-width: 640px) {
-	.hexagon-grid-container { width: 640px; }
-    .group-section summary { width: 640px; }
+	.hexagon-grid-container { width: 576px; }
+    .group-section summary { width: 576px; }
 	.hexagon:nth-child(7n+5) { margin-left: 74px; }
 }
 
 @media (max-width: 639px) {
-	.hexagon-grid-container { width: 320px; }
-    .group-section summary { width: 320px; }
+	.hexagon-grid-container { width: 288px; }
+    .group-section summary { width: 288px; }
 	.hexagon:nth-child(3n+3) { margin-left: 74px; }
 }
 
