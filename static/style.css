@@ -9,7 +9,7 @@
     --xv-gray-light: #c9c9c9;
     --xv-gray-dark: #9fa0a2;
     
-    --xv-green: rgba(133, 177, 58, 1);
+    --xv-green: #22c55e; /*rgba(133, 177, 58, 1)*/
     --xv-green-light: #33771b;
     --xv-green-feat: #91bd46; 
     
@@ -21,8 +21,8 @@
     --xv-yellow-light: #EBC268;
     --xv-yellow-feat: #efb534;
 
-    --xv-red: rgba(204, 55, 77, 1);
-    --xv-red-light: #dd0031;
+    --xv-red: #dd0031;
+    --xv-red-light: #7d1d1e;
     --xv-red-feat: #d84359;
 }
 
@@ -190,9 +190,9 @@ body {
 	width: 120px;
 	text-align: center;
 	font-family: 'Roboto Condensed', sans-serif;
-	font-weight: 700;
+	font-weight: 350;
 	font-size: 14px;
-	color: #fff;
+	color: var(--page-text);
 	z-index: 2;
     word-break: break-word;
 }
@@ -244,9 +244,9 @@ body {
 .hexagon.hexagon-green { background-color: var(--xv-green); }
 .hexagon.hexagon-green:before { border-bottom-color: var(--xv-green); }
 .hexagon.hexagon-green:after { border-top-color: var(--xv-green); }
-.hexagon.hexagon-green .hexagon-inner { background-color: var(--xv-green-light); }
-.hexagon.hexagon-green .hexagon-inner:before { border-bottom-color: var(--xv-green-light); }
-.hexagon.hexagon-green .hexagon-inner:after { border-top-color: var(--xv-green-light); }
+.hexagon.hexagon-green .hexagon-inner { background-color: var(--page-bg); }
+.hexagon.hexagon-green .hexagon-inner:before { border-bottom-color: var(--page-bg); }
+.hexagon.hexagon-green .hexagon-inner:after { border-top-color: var(--page-bg); }
 
 .hexagon.hexagon-red { background-color: var(--xv-red); }
 .hexagon.hexagon-red:before { border-bottom-color: var(--xv-red); }
