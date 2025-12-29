@@ -40,7 +40,7 @@ You can run HiveStatus easily using the pre-built image from GitHub Container Re
         ports:
           - "3000:3000"
         environment:
-          - GATUS_BASE_URL=https://status.deekshith.in
+          - GATUS_BASE_URL=https://status.twin.sh
         restart: unless-stopped
     ```
 
