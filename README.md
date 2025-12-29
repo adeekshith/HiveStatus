@@ -22,11 +22,43 @@ The application is configured via environment variables:
 
 | Variable | Description | Default |
 | :--- | :--- | :--- |
-| `GATUS_BASE_URL` | The base URL of your Gatus instance. | `https://status.deekshith.in` |
+| `GATUS_BASE_URL` | The base URL of your Gatus instance. | `https://status.twin.sh` |
 
 ## Installation & Running
 
-### Option 1: Local via Cargo
+### Option 1: Docker Compose (Recommended)
+
+You can run HiveStatus easily using the pre-built image from GitHub Container Registry.
+
+1.  Create a `docker-compose.yml` file:
+    ```yaml
+    version: '3.8'
+
+    services:
+      hive-status:
+        image: ghcr.io/adeekshith/hivestatus:latest
+        ports:
+          - "3000:3000"
+        environment:
+          - GATUS_BASE_URL=https://status.deekshith.in
+        restart: unless-stopped
+    ```
+
+2.  Start the container:
+    ```bash
+    docker-compose up -d
+    ```
+
+3.  Open `http://localhost:3000` in your browser.
+
+### Option 2: Run with Docker (Quick Start)
+
+Run the dashboard with a single command:
+```bash
+docker run -d -p 3000:3000 -e GATUS_BASE_URL="https://status.twin.sh" ghcr.io/adeekshith/hivestatus:latest
+```
+
+### Option 3: Local via Cargo
 
 1.  Navigate to the project directory:
     ```bash
@@ -43,23 +75,6 @@ The application is configured via environment variables:
     $env:GATUS_BASE_URL="https://your-gatus-url.com"
     cargo run
     ```
-
-3.  Open `http://localhost:3000` in your browser.
-
-### Option 2: Docker Compose
-
-1.  Navigate to the project directory:
-    ```bash
-    cd hive-status
-    ```
-
-2.  Build and start the container:
-    ```bash
-    docker-compose up -d --build
-    ```
-    *(To change the Gatus URL, edit the `docker-compose.yml` file or pass it inline: `GATUS_BASE_URL=... docker-compose up ...`)*
-
-3.  Open `http://localhost:3000` in your browser.
 
 ## Compilation (Static Binary with musl)
 
