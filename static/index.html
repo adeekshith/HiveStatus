@@ -70,7 +70,7 @@
                 ul.className = 'hexagon-grid-container';
 
                 groupServices.forEach(service => {
-                    const result = service.results && service.results.length > 0 ? service.results[0] : null;
+                    const result = service.results && service.results.length > 0 ? service.results[service.results.length - 1] : null;
                     const isSuccess = result ? result.success : false;
                     const colorClass = isSuccess ? 'hexagon-green' : 'hexagon-red';
                     

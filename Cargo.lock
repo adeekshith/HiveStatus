@@ -196,21 +196,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gatus-frontend"
-version = "0.1.0"
-dependencies = [
- "axum",
- "reqwest",
- "serde",
- "serde_json",
- "tokio",
- "tower 0.4.13",
- "tower-http 0.5.2",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "getrandom"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -235,6 +220,21 @@ dependencies = [
  "r-efi",
  "wasip2",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "hive-status"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tower 0.4.13",
+ "tower-http 0.5.2",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
