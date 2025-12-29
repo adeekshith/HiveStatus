@@ -1,5 +1,5 @@
 [package]
-name = "gatus-frontend"
+name = "hive-status"
 version = "0.1.0"
 edition = "2021"
 

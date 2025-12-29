@@ -1,4 +1,4 @@
-# Gatus Frontend
+# HiveStatus
 
 A modern, hexagonal monitoring dashboard frontend for [Gatus](https://github.com/TwiN/gatus). This application acts as a proxy and visualization layer, fetching status data from a Gatus instance and displaying it in a responsive, auto-refreshing honeycomb grid.
 
@@ -30,7 +30,7 @@ The application is configured via environment variables:
 
 1.  Navigate to the project directory:
     ```bash
-    cd gatus-frontend
+    cd hive-status
     ```
 
 2.  Run the application:
@@ -50,7 +50,7 @@ The application is configured via environment variables:
 
 1.  Navigate to the project directory:
     ```bash
-    cd gatus-frontend
+    cd hive-status
     ```
 
 2.  Build and start the container:
@@ -67,10 +67,10 @@ The included `Dockerfile` builds a static binary using `musl` on Alpine Linux.
 
 1.  Build the Docker image:
     ```bash
-    docker build -t gatus-frontend .
+    docker build -t hive-status .
     ```
 
 2.  Run the container:
     ```bash
-    docker run -p 3000:3000 -e GATUS_BASE_URL="https://your-gatus-url.com" gatus-frontend
+    docker run -p 3000:3000 -e GATUS_BASE_URL="https://your-gatus-url.com" hive-status
     ```

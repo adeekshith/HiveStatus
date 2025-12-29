@@ -24,7 +24,7 @@ WORKDIR /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # Copy the static binary
-COPY --from=builder /app/target/release/gatus-frontend .
+COPY --from=builder /app/target/release/hive-status .
 
 # Copy static assets
 COPY static ./static
@@ -36,4 +36,4 @@ EXPOSE 3000
 ENV GATUS_BASE_URL="https://status.deekshith.in"
 
 # Run the application
-CMD ["./gatus-frontend"]
+CMD ["./hive-status"]
