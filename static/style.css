@@ -175,12 +175,12 @@ body {
 }
 
 .hexagon-inner:before {
-    bottom: 100%;
+    bottom: calc(100% - 0.5px);
     border-bottom: 39.26px solid var(--xv-gray-light);
 }
 
 .hexagon-inner:after {
-    top: 100%;
+    top: calc(100% - 0.5px);
     width: 0;
     border-top: 39.26px solid var(--xv-gray-light);
 }
