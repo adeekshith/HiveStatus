@@ -38,9 +38,11 @@ async fn main() {
         gatus_base_url,
     };
 
+    let static_files = ServeDir::new("static").append_index_html_on_directories(true);
+
     let app = Router::new()
         .route("/api/statuses", get(get_statuses))
-        .nest_service("/", ServeDir::new("static").append_index_html_on_directories(true))
+        .fallback_service(static_files)
         .with_state(state);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
