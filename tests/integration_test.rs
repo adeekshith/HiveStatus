@@ -1,9 +1,10 @@
 use hive_status::configuration::{AppConfig, AppPublicConfig};
 use hive_status::startup;
 use once_cell::sync::Lazy;
-use tokio::net::TcpListener; // Use tokio's TcpListener
+use tokio::net::TcpListener;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
+use axum::http::StatusCode; // Import StatusCode
 
 // Lazy static to ensure the tracing subscriber is only initialized once
 static TRACING: Lazy<()> = Lazy::new(|| {
@@ -13,12 +14,12 @@ static TRACING: Lazy<()> = Lazy::new(|| {
 
 /// Helper function to spawn the application in the background for testing.
 async fn spawn_app() -> (String, MockServer) {
+    Lazy::force(&TRACING); // Ensure tracing is initialized at least once
 
-    // 2. Configure the application with test environment variables
-    //    These are set for AppConfig::new() if it were called in main,
-    //    but here we construct AppConfig directly.
+    // 1. Setup a mock Gatus server
     let mock_server = MockServer::start().await;
 
+    // 2. Configure the application with test environment variables
     let listener = TcpListener::bind("127.0.0.1:0").await.expect("Failed to bind to random port");
     let port = listener.local_addr().unwrap().port();
 
@@ -52,8 +53,6 @@ async fn spawn_app() -> (String, MockServer) {
     (server_address, mock_server)
 }
 
-
-
 #[tokio::test]
 async fn config_endpoint_returns_correct_configuration() {
     // Arrange
@@ -69,7 +68,7 @@ async fn config_endpoint_returns_correct_configuration() {
 
     // Assert
     assert!(response.status().is_success());
-    let config: AppPublicConfig = response.json().await.expect("Failed to parse JSON"); // Deserialize into AppPublicConfig
+    let config: AppPublicConfig = response.json().await.expect("Failed to parse JSON");
 
     assert_eq!(config.page_title, "Test Title");
     assert_eq!(config.refresh_interval_ms, 5000);
@@ -109,6 +108,58 @@ async fn statuses_endpoint_proxies_gatus_request() {
     assert!(response.status().is_success());
     let response_body: serde_json::Value = response.json().await.expect("Failed to parse JSON");
     assert_eq!(response_body, mock_response_body);
+}
+
+#[tokio::test]
+async fn statuses_endpoint_handles_upstream_non_200_response() {
+    // Arrange
+    let (app_address, mock_server) = spawn_app().await;
+    let client = reqwest::Client::new();
+
+    // Setup the mock Gatus API to return a 404
+    Mock::given(method("GET"))
+        .and(path("/api/v1/endpoints/statuses"))
+        .respond_with(ResponseTemplate::new(404))
+        .mount(&mock_server)
+        .await;
+
+    // Act
+    let response = client
+        .get(format!("{}/api/statuses", app_address))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    // Assert
+    assert_eq!(response.status(), StatusCode::NOT_FOUND);
+    let body = response.text().await.expect("Failed to get response body");
+    assert!(body.contains("Upstream error: 404 Not Found"));
+}
+
+#[tokio::test]
+async fn statuses_endpoint_handles_upstream_invalid_json() {
+    // Arrange
+    let (app_address, mock_server) = spawn_app().await;
+    let client = reqwest::Client::new();
+
+    // Setup the mock Gatus API to return invalid JSON
+    Mock::given(method("GET"))
+        .and(path("/api/v1/endpoints/statuses"))
+        .respond_with(ResponseTemplate::new(200).set_body_string("this is not json"))
+        .mount(&mock_server)
+        .await;
+
+    // Act
+    let response = client
+        .get(format!("{}/api/statuses", app_address))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    // Assert
+    assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    let body = response.text().await.expect("Failed to get response body");
+    assert!(body.contains("Failed to parse JSON"));
 }
 
 #[tokio::test]

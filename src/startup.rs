@@ -7,7 +7,6 @@ use axum::{
 use reqwest::Client;
 use std::net::SocketAddr;
 use tokio::net::TcpListener; // Use tokio's TcpListener
-use std::str::FromStr;
 use tower_http::services::ServeDir;
 use tracing_subscriber::{filter::Targets, layer::SubscriberExt, util::SubscriberInitExt};
 
