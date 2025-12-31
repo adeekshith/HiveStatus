@@ -1,4 +1,34 @@
-const REFRESH_INTERVAL_MS = 60000;
+let dataFetchInterval;
+
+async function setupAndRun() {
+    let refreshIntervalMs = 60000; // Default
+
+    try {
+        const response = await fetch('/api/config');
+        if (!response.ok) throw new Error('Could not fetch config');
+        const config = await response.json();
+        
+        console.log("Configuration loaded:", config); // For debugging
+        document.title = config.page_title;
+        
+        if (config.refresh_interval_ms && config.refresh_interval_ms > 1000) { // Ensure interval is reasonable
+            refreshIntervalMs = config.refresh_interval_ms;
+        }
+
+    } catch (error) {
+        console.error('Error setting up page, using defaults:', error);
+        document.title = "HiveStatus"; // Fallback title
+    }
+
+    // Initial data fetch
+    fetchData();
+
+    // Setup periodic refresh
+    if (dataFetchInterval) {
+        clearInterval(dataFetchInterval);
+    }
+    dataFetchInterval = setInterval(fetchData, refreshIntervalMs);
+}
 
 async function fetchData() {
     try {
@@ -83,6 +113,5 @@ function updateLastUpdated() {
     el.textContent = `Last updated: ${now.toLocaleTimeString()}`;
 }
 
-// Initial fetch and periodic refresh
-fetchData();
-setInterval(fetchData, REFRESH_INTERVAL_MS);
+// Initial setup and periodic refresh
+setupAndRun();

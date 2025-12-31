@@ -22,7 +22,12 @@ The application is configured via environment variables:
 
 | Variable | Description | Default |
 | :--- | :--- | :--- |
-| `GATUS_BASE_URL` | The base URL of your Gatus instance. | `https://status.twin.sh` |
+| `APP_GATUS_URL` | The base URL of your Gatus instance. | `https://status.twin.sh` |
+| `APP_PAGE_TITLE` | The title of the HTML page. | `HiveStatus` |
+| `APP_PORT` | The port the server will listen on. | `3000` |
+| `APP_HOST` | The host address the server will bind to. | `0.0.0.0` |
+| `APP_LOG_LEVEL` | The verbosity of application logs (`info`, `debug`, `warn`, `error`). | `info` |
+| `APP_REFRESH_INTERVAL_MS` | The data refresh interval in milliseconds. | `60000` |
 
 ## Installation & Running
 
@@ -38,9 +43,14 @@ You can run HiveStatus easily using the pre-built image from GitHub Container Re
       hive-status:
         image: ghcr.io/adeekshith/hivestatus:latest
         ports:
-          - "3000:3000"
+          - "${APP_PORT:-3000}:${APP_PORT:-3000}"
         environment:
-          - GATUS_BASE_URL=https://status.twin.sh
+          - APP_GATUS_URL=${APP_GATUS_URL:-https://status.twin.sh}
+          - APP_PAGE_TITLE=${APP_PAGE_TITLE:-HiveStatus}
+          - APP_PORT=${APP_PORT:-3000}
+          - APP_HOST=${APP_HOST:-0.0.0.0}
+          - APP_LOG_LEVEL=${APP_LOG_LEVEL:-info}
+          - APP_REFRESH_INTERVAL_MS=${APP_REFRESH_INTERVAL_MS:-60000}
         restart: unless-stopped
     ```
 
@@ -49,13 +59,20 @@ You can run HiveStatus easily using the pre-built image from GitHub Container Re
     docker-compose up -d
     ```
 
-3.  Open `http://localhost:3000` in your browser.
+3.  Open `http://localhost:${APP_PORT:-3000}` in your browser.
 
 ### Option 2: Run with Docker (Quick Start)
 
 Run the dashboard with a single command:
 ```bash
-docker run -d -p 3000:3000 -e GATUS_BASE_URL="https://status.twin.sh" ghcr.io/adeekshith/hivestatus:latest
+docker run -d -p 3000:3000 \
+  -e APP_GATUS_URL="https://your-gatus-instance.com" \
+  -e APP_PAGE_TITLE="My Custom Status" \
+  -e APP_PORT="3000" \
+  -e APP_HOST="0.0.0.0" \
+  -e APP_LOG_LEVEL="info" \
+  -e APP_REFRESH_INTERVAL_MS="30000" \
+  ghcr.io/adeekshith/hivestatus:latest
 ```
 
 ### Option 3: Local via Cargo
@@ -65,16 +82,25 @@ docker run -d -p 3000:3000 -e GATUS_BASE_URL="https://status.twin.sh" ghcr.io/ad
     cd hive-status
     ```
 
-2.  Run the application:
+2.  Run the application with your desired configuration:
     ```bash
     # Linux/Mac
-    export GATUS_BASE_URL="https://your-gatus-url.com"
+    export APP_GATUS_URL="https://your-gatus-url.com"
+    export APP_PAGE_TITLE="My Status Page"
+    export APP_PORT="8080"
+    export APP_LOG_LEVEL="debug"
+    export APP_REFRESH_INTERVAL_MS="15000"
     cargo run
 
     # Windows (PowerShell)
-    $env:GATUS_BASE_URL="https://your-gatus-url.com"
+    $env:APP_GATUS_URL="https://your-gatus-url.com"
+    $env:APP_PAGE_TITLE="My Status Page"
+    $env:APP_PORT="8080"
+    $env:APP_LOG_LEVEL="debug"
+    $env:APP_REFRESH_INTERVAL_MS="15000"
     cargo run
     ```
+
 
 ## Compilation (Static Binary with musl)
 

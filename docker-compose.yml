@@ -5,7 +5,12 @@ services:
     image: ghcr.io/adeekshith/hivestatus:latest
     build: .
     ports:
-      - "3000:3000"
+      - "${APP_PORT:-3000}:3000"
     environment:
-      - GATUS_BASE_URL=${GATUS_BASE_URL:-https://status.deekshith.in}
+      - APP_GATUS_URL=${APP_GATUS_URL:-https://status.twin.sh}
+      - APP_PAGE_TITLE=${APP_PAGE_TITLE:-HiveStatus}
+      - APP_PORT=${APP_PORT:-3000}
+      - APP_HOST=${APP_HOST:-0.0.0.0}
+      - APP_LOG_LEVEL=${APP_LOG_LEVEL:-info}
+      - APP_REFRESH_INTERVAL_MS=${APP_REFRESH_INTERVAL_MS:-60000}
     restart: unless-stopped
