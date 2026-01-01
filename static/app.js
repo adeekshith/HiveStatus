@@ -37,8 +37,26 @@ async function fetchData() {
         const data = await response.json();
         render(data);
         updateLastUpdated();
+        clearError();
     } catch (error) {
         console.error('Error fetching data:', error);
+        showError(`Connection lost: ${error.message}`);
+    }
+}
+
+function showError(message) {
+    const el = document.getElementById('footer-error');
+    if (el) {
+        el.textContent = message;
+        // Optionally add an icon or styling class here if needed, 
+        // but CSS handles the red color.
+    }
+}
+
+function clearError() {
+    const el = document.getElementById('footer-error');
+    if (el) {
+        el.textContent = '';
     }
 }
 
