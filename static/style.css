@@ -253,6 +253,17 @@ body {
     text-align: center;
 }
 
-.footer-spacer {
-    /* Empty spacer to balance the grid */
+.footer-powered {
+    text-align: right;
+    padding-right: 20px;
+}
+
+.footer-powered a {
+    color: var(--meta-text);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.footer-powered a:hover {
+    text-decoration: underline;
 }
