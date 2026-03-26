@@ -148,8 +148,10 @@ function layoutHoneycomb(gridContainer) {
     const hexWidth = resolveVar('--hex-width');
     const hexMarginX = resolveVar('--hex-margin-x');
     const cellWidth = hexWidth + 2 * hexMarginX;
-    const containerWidth = gridContainer.clientWidth;
-    if (containerWidth === 0 || cellWidth === 0) return;
+    if (cellWidth === 0) return;
+    // Use container width, falling back to viewport width (grid is always full-width)
+    const containerWidth = gridContainer.clientWidth || document.documentElement.clientWidth;
+    if (containerWidth === 0) return;
     const perRow = Math.max(1, Math.floor(containerWidth / cellWidth));
 
     // Clear existing rows
@@ -188,7 +190,9 @@ function layoutHoneycomb(gridContainer) {
 }
 
 function layoutAllGrids() {
-    document.querySelectorAll('.hexagon-grid-container').forEach(layoutHoneycomb);
+    requestAnimationFrame(() => {
+        document.querySelectorAll('.hexagon-grid-container').forEach(layoutHoneycomb);
+    });
 }
 
 function setupResizeObserver() {
