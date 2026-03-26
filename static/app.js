@@ -1,4 +1,5 @@
 let dataFetchInterval;
+let resizeObserver;
 
 async function setupAndRun() {
     let refreshIntervalMs = 60000; // Default
@@ -123,6 +124,49 @@ function render(services) {
         details.appendChild(ul);
         container.appendChild(details);
     });
+
+    layoutAllGrids();
+}
+
+function layoutHoneycomb(gridContainer) {
+    const hexagons = Array.from(gridContainer.querySelectorAll(':scope > .hexagon'));
+    if (hexagons.length === 0) return;
+
+    const style = getComputedStyle(document.documentElement);
+    const hexWidth = parseFloat(style.getPropertyValue('--hex-width'));
+    const hexMarginX = parseFloat(style.getPropertyValue('--hex-margin-x'));
+    const cellWidth = hexWidth + 2 * hexMarginX;
+    const containerWidth = gridContainer.clientWidth;
+    const perRow = Math.max(2, Math.floor(containerWidth / cellWidth));
+
+    // Clear existing rows
+    gridContainer.innerHTML = '';
+
+    let i = 0;
+    let isOffset = false;
+    while (i < hexagons.length) {
+        const row = document.createElement('div');
+        row.className = isOffset ? 'hex-row hex-row-offset' : 'hex-row';
+        const count = isOffset ? Math.min(perRow - 1, hexagons.length - i) : Math.min(perRow, hexagons.length - i);
+        for (let j = 0; j < count; j++) {
+            row.appendChild(hexagons[i++]);
+        }
+        gridContainer.appendChild(row);
+        isOffset = !isOffset;
+    }
+}
+
+function layoutAllGrids() {
+    document.querySelectorAll('.hexagon-grid-container').forEach(layoutHoneycomb);
+}
+
+function setupResizeObserver() {
+    if (resizeObserver) resizeObserver.disconnect();
+    resizeObserver = new ResizeObserver(() => {
+        layoutAllGrids();
+    });
+    const app = document.getElementById('app');
+    if (app) resizeObserver.observe(app);
 }
 
 function updateLastUpdated() {
@@ -133,3 +177,4 @@ function updateLastUpdated() {
 
 // Initial setup and periodic refresh
 setupAndRun();
+setupResizeObserver();
