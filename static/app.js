@@ -17,6 +17,12 @@ async function setupAndRun() {
             refreshIntervalMs = config.refresh_interval_ms;
         }
 
+        // Set footer text from config
+        const footerEl = document.getElementById('footer-powered');
+        if (footerEl && config.footer_text) {
+            footerEl.innerHTML = config.footer_text;
+        }
+
     } catch (error) {
         console.error('Error setting up page, using defaults:', error);
         document.title = "HiveStatus"; // Fallback title

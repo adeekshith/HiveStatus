@@ -13,4 +13,5 @@ services:
       - APP_HOST=${APP_HOST:-0.0.0.0}
       - APP_LOG_LEVEL=${APP_LOG_LEVEL:-info}
       - APP_REFRESH_INTERVAL_MS=${APP_REFRESH_INTERVAL_MS:-60000}
+      - APP_FOOTER_TEXT=${APP_FOOTER_TEXT:-}
     restart: unless-stopped

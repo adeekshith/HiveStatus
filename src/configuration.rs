@@ -8,6 +8,7 @@ pub struct AppConfig {
     pub page_title: String,
     pub gatus_url: String,
     pub refresh_interval_ms: u64,
+    pub footer_text: String,
     pub host: String,
     pub port: u16,
     pub log_level: Level, // This field doesn't need to be serialized/deserialized
@@ -33,10 +34,13 @@ impl AppConfig {
         
         let page_title = env::var("APP_PAGE_TITLE").unwrap_or_else(|_| "HiveStatus".to_string());
 
+        let footer_text = env::var("APP_FOOTER_TEXT").unwrap_or_else(|_| "Powered by <a href=\"https://github.com/adeekshith/HiveStatus\" target=\"_blank\" rel=\"noopener noreferrer\">HiveStatus</a>".to_string());
+
         Self {
             page_title,
             gatus_url,
             refresh_interval_ms,
+            footer_text,
             host,
             port,
             log_level,
@@ -50,6 +54,7 @@ pub struct AppPublicConfig {
     pub page_title: String,
     pub gatus_url: String,
     pub refresh_interval_ms: u64,
+    pub footer_text: String,
 }
 
 #[cfg(test)]
@@ -102,6 +107,7 @@ mod tests {
         let _guard_page_title = TestEnvVarGuard::remove("APP_PAGE_TITLE");
         let _guard_refresh = TestEnvVarGuard::remove("APP_REFRESH_INTERVAL_MS");
         let _guard_log_level = TestEnvVarGuard::remove("APP_LOG_LEVEL");
+        let _guard_footer = TestEnvVarGuard::remove("APP_FOOTER_TEXT");
 
         let config = AppConfig::new();
 
@@ -111,6 +117,7 @@ mod tests {
         assert_eq!(config.page_title, "HiveStatus");
         assert_eq!(config.refresh_interval_ms, 60000);
         assert_eq!(config.log_level, Level::INFO);
+        assert!(config.footer_text.contains("HiveStatus"));
     }
 
     #[test]
@@ -121,15 +128,17 @@ mod tests {
         let _guard_page_title = TestEnvVarGuard::new("APP_PAGE_TITLE", "Custom Title");
         let _guard_refresh = TestEnvVarGuard::new("APP_REFRESH_INTERVAL_MS", "10000");
         let _guard_log_level = TestEnvVarGuard::new("APP_LOG_LEVEL", "debug");
+        let _guard_footer = TestEnvVarGuard::new("APP_FOOTER_TEXT", "My Company Status");
 
         let config = AppConfig::new();
 
-        assert_eq!(config.host, "127.0.0.1"); // Error here, should be 127.0.0.1
+        assert_eq!(config.host, "127.0.0.1");
         assert_eq!(config.port, 8080);
         assert_eq!(config.gatus_url, "http://test.gatus.com");
         assert_eq!(config.page_title, "Custom Title");
         assert_eq!(config.refresh_interval_ms, 10000);
         assert_eq!(config.log_level, Level::DEBUG);
+        assert_eq!(config.footer_text, "My Company Status");
     }
 
     #[test]

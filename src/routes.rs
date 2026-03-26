@@ -13,6 +13,7 @@ pub async fn get_config(State(state): State<AppState>) -> impl IntoResponse {
         page_title: state.config.page_title.clone(),
         gatus_url: state.config.gatus_url.clone(),
         refresh_interval_ms: state.config.refresh_interval_ms,
+        footer_text: state.config.footer_text.clone(),
     };
     Json(public_config)
 }

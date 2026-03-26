@@ -29,6 +29,7 @@ async fn spawn_app() -> (String, MockServer) {
         gatus_url: mock_server.uri(),
         page_title: "Test Title".to_string(),
         refresh_interval_ms: 5000,
+        footer_text: "Powered by HiveStatus".to_string(),
         log_level: tracing::Level::DEBUG, // Use DEBUG for test logs
     };
 
