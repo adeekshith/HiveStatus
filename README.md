@@ -115,3 +115,42 @@ The included `Dockerfile` builds a static binary using `musl` on Alpine Linux.
     ```bash
     docker run -p 3000:3000 -e GATUS_BASE_URL="https://your-gatus-url.com" hive-status
     ```
+
+## Testing
+
+### Rust unit and integration tests (via Docker)
+
+```bash
+docker build -t hivestatus-test --target builder -f- . <<'DOCKERFILE'
+FROM rust:alpine AS builder
+RUN apk add --no-cache musl-dev gcc ca-certificates
+WORKDIR /app
+COPY . .
+RUN cargo test --release 2>&1
+DOCKERFILE
+```
+
+This runs all Rust unit tests (configuration parsing) and integration tests (API endpoints, static file serving, upstream error handling) inside an Alpine container — nothing is installed on your host.
+
+### Playwright E2E tests (via Docker Compose)
+
+```bash
+docker compose -f docker-compose.test.yml up --build --abort-on-container-exit
+```
+
+This spins up two containers:
+- **app** — the HiveStatus server
+- **e2e** — Playwright (Chromium) running browser tests against the app
+
+Tests cover hexagon rendering, status colors, centering, dark mode glow effects, responsive scaling, collapsible groups, and more. All tests run at both desktop (1920x1080) and mobile (375x812) viewports.
+
+### Running Playwright tests locally (without Docker)
+
+```bash
+cd e2e
+npm install
+npx playwright install chromium
+npx playwright test
+```
+
+> Note: the app must be running on `http://localhost:3000` (or set `BASE_URL` env var).
