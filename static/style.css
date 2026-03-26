@@ -13,10 +13,13 @@
 
     /* Hexagon Dimensions */
     --hex-width: 140px;
-    --hex-height: 80.83px;
-    --hex-margin-x: 2px;
-    --hex-margin-y: 44px;
-    --hex-indent: 74px; 
+    --hex-height: calc(var(--hex-width) * 0.866);
+    --hex-margin-x: 3px;
+    --hex-margin-y: 3px;
+    --hex-indent: calc(var(--hex-width) / 2 + var(--hex-margin-x));
+
+    /* Hexagon Shape */
+    --hex-clip: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -97,87 +100,36 @@ body {
 /* Hexagon Styles */
 .hexagon {
   position: relative;
-  width: var(--hex-width); 
+  width: var(--hex-width);
   height: var(--hex-height);
   background-color: var(--xv-gray-dark);
-  margin: var(--hex-margin-y) var(--hex-margin-x) 0 var(--hex-margin-x);
+  margin: var(--hex-margin-y) var(--hex-margin-x);
+  clip-path: var(--hex-clip);
   display: flex;
   justify-content: center;
   align-items: center;
 
-  &::before, &::after {
-    content: "";
-    position: absolute;
-    width: 0;
-    border-left: calc(var(--hex-width) / 2) solid transparent;
-    border-right: calc(var(--hex-width) / 2) solid transparent;
-  }
-
-  &::before {
-    bottom: calc(100% - 1px);
-    border-bottom: calc(var(--hex-height) / 2) solid var(--xv-gray-dark);
-  }
-
-  &::after {
-    top: calc(100% - 1px);
-    border-top: calc(var(--hex-height) / 2) solid var(--xv-gray-dark);
-  }
-
-  /* Color States using Nesting */
+  /* Color States */
   &.hexagon-green {
     background-color: var(--xv-green);
-    &::before { border-bottom-color: var(--xv-green); }
-    &::after { border-top-color: var(--xv-green); }
-
-    .hexagon-inner {
-        background-color: var(--page-bg);
-        &::before { border-bottom-color: var(--page-bg); }
-        &::after { border-top-color: var(--page-bg); }
-    }
+    .hexagon-inner { background-color: var(--page-bg); }
     .hexagon-name { color: var(--page-text); }
   }
 
   &.hexagon-red {
     background-color: var(--xv-red);
-    &::before { border-bottom-color: var(--xv-red); }
-    &::after { border-top-color: var(--xv-red); }
-
-    .hexagon-inner {
-        background-color: var(--xv-red-light);
-        &::before { border-bottom-color: var(--xv-red-light); }
-        &::after { border-top-color: var(--xv-red-light); }
-    }
+    .hexagon-inner { background-color: var(--xv-red-light); }
   }
 }
 
 .hexagon-inner {
-  position: relative;
-  width: 97%; 
-  height: 97%;
+  width: 94%;
+  height: 94%;
   background-color: var(--xv-gray-light);
-  margin: 0;
+  clip-path: var(--hex-clip);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1;
-
-  &::before, &::after {
-    content: "";
-    position: absolute;
-    width: 0;
-    border-left: calc(var(--hex-width) * 0.97 / 2) solid transparent;
-    border-right: calc(var(--hex-width) * 0.97 / 2) solid transparent;
-  }
-
-  &::before {
-    bottom: calc(100% - 1px);
-    border-bottom: calc(var(--hex-height) * 0.97 / 2) solid var(--xv-gray-light);
-  }
-
-  &::after {
-    top: calc(100% - 1px);
-    border-top: calc(var(--hex-height) * 0.97 / 2) solid var(--xv-gray-light);
-  }
 }
 
 .hexagon-name {
