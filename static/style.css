@@ -7,8 +7,8 @@
     /* Color Palette */
     --xv-gray-light: #c9c9c9;
     --xv-gray-dark: #9fa0a2;
-    --xv-green: #22c55e;
-    --xv-red: #dd0031;
+    --xv-green: #16a34a;
+    --xv-red: #dc2626;
     --xv-red-light: #7d1d1e;
 
     /* Hexagon Dimensions */
@@ -24,12 +24,30 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --page-bg: #121212;
-        --page-text: #e9ecef;
-        --meta-text: #adb5bd;
-        --xv-gray-light: #475569;
-        --xv-gray-dark: #334155;
+        --page-bg: #0d1117;
+        --page-text: #e6edf3;
+        --meta-text: #8b949e;
+        --xv-gray-light: #30363d;
+        --xv-gray-dark: #21262d;
+        --xv-green: #2ea043;
+        --xv-red: #f85149;
+        --xv-red-light: #4a1518;
     }
+}
+
+/* Dark mode glow effects for TV visibility */
+@media (prefers-color-scheme: dark) {
+    .hexagon.hexagon-green {
+        filter: drop-shadow(0 0 8px rgba(46, 160, 67, 0.4));
+    }
+    .hexagon.hexagon-red {
+        animation: pulse-red 2s ease-in-out infinite;
+    }
+}
+
+@keyframes pulse-red {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(248, 81, 73, 0.3)); }
+    50% { filter: drop-shadow(0 0 20px rgba(248, 81, 73, 0.7)); }
 }
 
 /* Global Reset */
