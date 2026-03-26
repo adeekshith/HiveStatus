@@ -28,6 +28,7 @@ The application is configured via environment variables:
 | `APP_HOST` | The host address the server will bind to. | `0.0.0.0` |
 | `APP_LOG_LEVEL` | The verbosity of application logs (`info`, `debug`, `warn`, `error`). | `info` |
 | `APP_REFRESH_INTERVAL_MS` | The data refresh interval in milliseconds. | `60000` |
+| `APP_FOOTER_TEXT` | Custom footer HTML (replaces "Powered by HiveStatus"). | `Powered by <a href="...">HiveStatus</a>` |
 
 ## Installation & Running
 
@@ -51,6 +52,7 @@ You can run HiveStatus easily using the pre-built image from GitHub Container Re
           - APP_HOST=${APP_HOST:-0.0.0.0}
           - APP_LOG_LEVEL=${APP_LOG_LEVEL:-info}
           - APP_REFRESH_INTERVAL_MS=${APP_REFRESH_INTERVAL_MS:-60000}
+          - APP_FOOTER_TEXT=${APP_FOOTER_TEXT:-}
         restart: unless-stopped
     ```
 
@@ -113,8 +115,10 @@ The included `Dockerfile` builds a static binary using `musl` on Alpine Linux.
 
 2.  Run the container:
     ```bash
-    docker run -p 3000:3000 -e GATUS_BASE_URL="https://your-gatus-url.com" hive-status
+    docker run -p 3000:3000 -e APP_GATUS_URL="https://your-gatus-url.com" hive-status
     ```
+
+    > **Port conflict?** If you see `Bind for 0.0.0.0:3000 failed: port is already allocated`, either stop the process using port 3000 or map to a different host port: `docker run -p 8080:3000 hive-status`.
 
 ## Testing
 
