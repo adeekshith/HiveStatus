@@ -302,8 +302,8 @@ test.describe('Responsive scaling', () => {
 
     // Desktop hexagons should be larger than mobile
     expect(desktopWidth).toBeGreaterThan(mobileWidth);
-    // Mobile should be at minimum (90px)
-    expect(mobileWidth).toBeCloseTo(90, -1);
+    // Mobile should be at minimum (112px)
+    expect(mobileWidth).toBeCloseTo(112, -1);
 
     await mobilePage.close();
     await desktopPage.close();

@@ -11,11 +11,11 @@
     --xv-red: #dc2626;
     --xv-red-light: #7d1d1e;
 
-    /* Hexagon Dimensions — scales with viewport */
-    --hex-width: clamp(90px, 9vw, 220px);
+    /* Hexagon Dimensions — scales with viewport, sized for TV dashboard readability */
+    --hex-width: clamp(112px, 11.25vw, 275px);
     --hex-height: calc(var(--hex-width) * 1.1547);
-    --hex-margin-x: clamp(2px, 0.3vw, 6px);
-    --hex-margin-y: clamp(2px, 0.3vw, 6px);
+    --hex-margin-x: clamp(3px, 0.4vw, 8px);
+    --hex-margin-y: clamp(3px, 0.4vw, 8px);
     --hex-indent: calc(var(--hex-width) / 2 + var(--hex-margin-x));
 
     /* Pointy-top hexagon shape */
@@ -76,7 +76,7 @@ body {
     margin-bottom: 40px;
 
     & summary {
-        font-size: clamp(1.2rem, 2vw, 2.5rem);
+        font-size: clamp(1.5rem, 2.5vw, 3.125rem);
         font-weight: 700;
         margin-bottom: 20px;
         cursor: pointer;
@@ -96,7 +96,7 @@ body {
             content: "▾";
             position: absolute;
             right: 0;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             transition: transform 0.2s;
         }
     }
@@ -165,7 +165,7 @@ body {
 	text-align: center;
 	font-family: 'Inter', sans-serif;
 	font-weight: 150;
-	font-size: clamp(12px, 1.1vw, 22px);
+	font-size: clamp(15px, 1.375vw, 28px);
 	color: #fff;
     word-break: break-word;
 }
@@ -181,7 +181,7 @@ body {
     background-color: var(--page-bg); 
     border-top: 1px solid rgba(128, 128, 128, 0.2);
     padding: 15px;
-    font-size: clamp(0.7rem, 0.9vw, 1.2rem);
+    font-size: clamp(0.875rem, 1.125vw, 1.5rem);
     color: var(--meta-text);
     z-index: 1000;
     
