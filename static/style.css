@@ -11,11 +11,11 @@
     --xv-red: #dc2626;
     --xv-red-light: #7d1d1e;
 
-    /* Hexagon Dimensions */
-    --hex-width: 140px;
+    /* Hexagon Dimensions — scales with viewport */
+    --hex-width: clamp(90px, 9vw, 220px);
     --hex-height: calc(var(--hex-width) * 0.866);
-    --hex-margin-x: 3px;
-    --hex-margin-y: 3px;
+    --hex-margin-x: clamp(2px, 0.3vw, 6px);
+    --hex-margin-y: clamp(2px, 0.3vw, 6px);
     --hex-indent: calc(var(--hex-width) / 2 + var(--hex-margin-x));
 
     /* Hexagon Shape */
@@ -76,7 +76,7 @@ body {
     margin-bottom: 40px;
 
     & summary {
-        font-size: 1.5rem;
+        font-size: clamp(1.2rem, 2vw, 2.5rem);
         font-weight: 700;
         margin-bottom: 20px;
         cursor: pointer;
@@ -165,9 +165,8 @@ body {
 	text-align: center;
 	font-family: 'Roboto Condensed', sans-serif;
 	font-weight: 150;
-	font-size: 16px;
+	font-size: clamp(12px, 1.1vw, 22px);
 	color: #fff;
-	z-index: 2;
     word-break: break-word;
 }
 
@@ -182,7 +181,7 @@ body {
     background-color: var(--page-bg); 
     border-top: 1px solid rgba(128, 128, 128, 0.2);
     padding: 15px;
-    font-size: 0.8rem;
+    font-size: clamp(0.7rem, 0.9vw, 1.2rem);
     color: var(--meta-text);
     z-index: 1000;
     
