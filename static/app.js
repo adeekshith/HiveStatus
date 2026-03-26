@@ -1,5 +1,6 @@
 let dataFetchInterval;
 let resizeObserver;
+let resizeTimeout;
 
 async function setupAndRun() {
     let refreshIntervalMs = 60000; // Default
@@ -128,13 +129,24 @@ function render(services) {
     layoutAllGrids();
 }
 
+function resolveVar(varName) {
+    const el = document.createElement('div');
+    el.style.position = 'absolute';
+    el.style.visibility = 'hidden';
+    el.style.width = `var(${varName})`;
+    document.body.appendChild(el);
+    const value = parseFloat(getComputedStyle(el).width);
+    el.remove();
+    return value;
+}
+
 function layoutHoneycomb(gridContainer) {
-    const hexagons = Array.from(gridContainer.querySelectorAll(':scope > .hexagon'));
+    // Collect hexagons whether they're direct children or inside .hex-row wrappers
+    const hexagons = Array.from(gridContainer.querySelectorAll('.hexagon'));
     if (hexagons.length === 0) return;
 
-    const style = getComputedStyle(document.documentElement);
-    const hexWidth = parseFloat(style.getPropertyValue('--hex-width'));
-    const hexMarginX = parseFloat(style.getPropertyValue('--hex-margin-x'));
+    const hexWidth = resolveVar('--hex-width');
+    const hexMarginX = resolveVar('--hex-margin-x');
     const cellWidth = hexWidth + 2 * hexMarginX;
     const containerWidth = gridContainer.clientWidth;
     const perRow = Math.max(2, Math.floor(containerWidth / cellWidth));
@@ -163,7 +175,8 @@ function layoutAllGrids() {
 function setupResizeObserver() {
     if (resizeObserver) resizeObserver.disconnect();
     resizeObserver = new ResizeObserver(() => {
-        layoutAllGrids();
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(layoutAllGrids, 100);
     });
     const app = document.getElementById('app');
     if (app) resizeObserver.observe(app);
