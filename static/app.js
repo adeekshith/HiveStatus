@@ -9,10 +9,10 @@ async function setupAndRun() {
         const response = await fetch('/api/config');
         if (!response.ok) throw new Error('Could not fetch config');
         const config = await response.json();
-        
+
         console.log("Configuration loaded:", config); // For debugging
         document.title = config.page_title;
-        
+
         if (config.refresh_interval_ms && config.refresh_interval_ms > 1000) { // Ensure interval is reasonable
             refreshIntervalMs = config.refresh_interval_ms;
         }
@@ -50,8 +50,6 @@ function showError(message) {
     const el = document.getElementById('footer-error');
     if (el) {
         el.textContent = message;
-        // Optionally add an icon or styling class here if needed, 
-        // but CSS handles the red color.
     }
 }
 
@@ -100,23 +98,22 @@ function render(services) {
 
         const ul = document.createElement('ul');
         ul.className = 'hexagon-grid-container';
-        ul.dataset.items = groupServices.length;
 
         groupServices.forEach(service => {
             const result = service.results && service.results.length > 0 ? service.results[service.results.length - 1] : null;
             const isSuccess = result ? result.success : false;
             const colorClass = isSuccess ? 'hexagon-green' : 'hexagon-red';
-            
+
             const li = document.createElement('li');
             li.className = `hexagon ${colorClass}`;
-            
+
             const innerDiv = document.createElement('div');
             innerDiv.className = 'hexagon-inner';
-            
+
             const nameSpan = document.createElement('span');
             nameSpan.className = 'hexagon-name';
             nameSpan.textContent = service.name;
-            
+
             innerDiv.appendChild(nameSpan);
             li.appendChild(innerDiv);
             ul.appendChild(li);
@@ -126,72 +123,54 @@ function render(services) {
         container.appendChild(details);
     });
 
-    layoutAllGrids();
-}
-
-function resolveVar(varName) {
-    const el = document.createElement('div');
-    el.style.position = 'absolute';
-    el.style.visibility = 'hidden';
-    el.style.width = `var(${varName})`;
-    document.body.appendChild(el);
-    const value = parseFloat(getComputedStyle(el).width);
-    el.remove();
-    return value;
-}
-
-function layoutHoneycomb(gridContainer) {
-    // Collect hexagons whether they're direct children or inside .hex-row wrappers
-    const hexagons = Array.from(gridContainer.querySelectorAll('.hexagon'));
-    if (hexagons.length === 0) return;
-
-    const hexWidth = resolveVar('--hex-width');
-    const hexMarginX = resolveVar('--hex-margin-x');
-    const cellWidth = hexWidth + 2 * hexMarginX;
-    if (cellWidth === 0) return;
-    // Use container width, falling back to viewport width (grid is always full-width)
-    const containerWidth = gridContainer.clientWidth || document.documentElement.clientWidth;
-    if (containerWidth === 0) return;
-    const perRow = Math.max(1, Math.floor(containerWidth / cellWidth));
-
-    // Clear existing rows
-    gridContainer.innerHTML = '';
-
-    // If everything fits in one row or only 1 per row, no honeycomb offset
-    if (hexagons.length <= perRow || perRow <= 1) {
-        for (let i = 0; i < hexagons.length; i += Math.max(1, perRow)) {
-            const row = document.createElement('div');
-            row.className = 'hex-row';
-            const end = Math.min(i + perRow, hexagons.length);
-            for (let j = i; j < end; j++) {
-                row.appendChild(hexagons[j]);
-            }
-            gridContainer.appendChild(row);
-        }
-        return;
-    }
-
-    // Multiple rows — use honeycomb pattern
-    let i = 0;
-    let isOffset = false;
-    while (i < hexagons.length) {
-        const count = isOffset
-            ? Math.min(perRow - 1, hexagons.length - i)
-            : Math.min(perRow, hexagons.length - i);
-        if (count === 0) { isOffset = !isOffset; continue; }
-        const row = document.createElement('div');
-        row.className = isOffset ? 'hex-row hex-row-offset' : 'hex-row';
-        for (let j = 0; j < count; j++) {
-            row.appendChild(hexagons[i++]);
-        }
-        gridContainer.appendChild(row);
-        isOffset = !isOffset;
-    }
-}
-
-function layoutAllGrids() {
+    // Defer honeycomb offset to after browser has laid out the flex-wrap items
     requestAnimationFrame(() => {
-        document.querySelectorAll('.hexagon-grid-container').forEach(layoutHoneycomb);
+        requestAnimationFrame(() => {
+            applyHoneycombOffsets();
+        });
+    });
+}
+
+/**
+ * Detect visual rows from flex-wrap layout and apply honeycomb offset.
+ * CSS flex-wrap handles all row wrapping; this only adds the half-hex
+ * translateX to every other row for the beehive interlock effect.
+ */
+function applyHoneycombOffsets() {
+    document.querySelectorAll('.hexagon-grid-container').forEach(grid => {
+        const hexagons = Array.from(grid.querySelectorAll('.hexagon'));
+        if (hexagons.length === 0) return;
+
+        // Reset previous offsets
+        hexagons.forEach(hex => {
+            hex.classList.remove('hex-offset');
+        });
+
+        // Detect visual rows by comparing offsetTop
+        const rows = [];
+        let currentRowTop = -Infinity;
+        let currentRow = [];
+
+        hexagons.forEach(hex => {
+            const top = hex.offsetTop;
+            if (Math.abs(top - currentRowTop) > 10) {
+                if (currentRow.length > 0) rows.push(currentRow);
+                currentRow = [hex];
+                currentRowTop = top;
+            } else {
+                currentRow.push(hex);
+            }
+        });
+        if (currentRow.length > 0) rows.push(currentRow);
+
+        // Only apply honeycomb offset if there are multiple rows
+        if (rows.length > 1) {
+            rows.forEach((row, i) => {
+                if (i % 2 === 1) {
+                    row.forEach(hex => hex.classList.add('hex-offset'));
+                }
+            });
+        }
     });
 }
 
@@ -199,7 +178,9 @@ function setupResizeObserver() {
     if (resizeObserver) resizeObserver.disconnect();
     resizeObserver = new ResizeObserver(() => {
         clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(layoutAllGrids, 100);
+        resizeTimeout = setTimeout(() => {
+            requestAnimationFrame(applyHoneycombOffsets);
+        }, 100);
     });
     const app = document.getElementById('app');
     if (app) resizeObserver.observe(app);

@@ -33,8 +33,9 @@ test.describe('Dashboard UI', () => {
     );
 
     await page.goto('/');
-    // Wait for hexagons to render
+    // Wait for hexagons to render and layout to stabilize
     await page.waitForSelector('.hexagon');
+    await page.waitForTimeout(200);
   });
 
   test('renders pointy-top hexagons with clip-path polygon', async ({ page }) => {
@@ -91,28 +92,22 @@ test.describe('Dashboard UI', () => {
     await expect(details).toHaveAttribute('open', '');
   });
 
-  test('hexagon grid uses centered rows', async ({ page }) => {
-    const rows = page.locator('.hex-row');
-    const count = await rows.count();
-    expect(count).toBeGreaterThan(0);
-
-    // Verify rows use flex centering
-    const justifyContent = await rows
-      .first()
-      .evaluate((el) => getComputedStyle(el).justifyContent);
-    expect(justifyContent).toBe('center');
+  test('hexagon grid uses flex-wrap centering', async ({ page }) => {
+    const grid = page.locator('.hexagon-grid-container').first();
+    const styles = await grid.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return { display: s.display, flexWrap: s.flexWrap, justifyContent: s.justifyContent };
+    });
+    expect(styles.display).toBe('flex');
+    expect(styles.flexWrap).toBe('wrap');
+    expect(styles.justifyContent).toBe('center');
   });
 
-  test('offset rows have translateX transform', async ({ page }) => {
-    const offsetRow = page.locator('.hex-row-offset').first();
-    const count = await page.locator('.hex-row-offset').count();
-    if (count > 0) {
-      const transform = await offsetRow.evaluate(
-        (el) => getComputedStyle(el).transform
-      );
-      // transform should be a matrix (translated)
-      expect(transform).not.toBe('none');
-    }
+  test('hexagons are direct children of grid container', async ({ page }) => {
+    // Hexagons should be direct children of the grid (no .hex-row wrappers)
+    const directHexagons = page.locator('.hexagon-grid-container > .hexagon');
+    const count = await directHexagons.count();
+    expect(count).toBeGreaterThan(0);
   });
 
   test('sets page title from config', async ({ page }) => {
@@ -136,18 +131,18 @@ test.describe('Dashboard UI', () => {
     expect(styles.borderBottom).toBe('none');
   });
 
-  test('honeycomb rows interlock vertically', async ({ page }) => {
-    // With 4 core items at 1920px desktop, there should be multiple rows
-    const rows = page.locator(
-      '.group-section:first-of-type .hex-row'
-    );
-    const count = await rows.count();
-    if (count >= 2) {
-      // Second row should have negative margin-top (interlocking)
-      const marginTop = await rows.nth(1).evaluate(
-        (el) => parseFloat(getComputedStyle(el).marginTop)
+  test('honeycomb offset applied to alternate-row hexagons', async ({ page }) => {
+    // On mobile (375px), 4 core items may need multiple rows
+    // On desktop (1920px), they might fit in one row
+    // Just verify the offset mechanism works when present
+    const offsetHexagons = page.locator('.hexagon.hex-offset');
+    const count = await offsetHexagons.count();
+    if (count > 0) {
+      const transform = await offsetHexagons.first().evaluate(
+        (el) => getComputedStyle(el).transform
       );
-      expect(marginTop).toBeLessThan(0);
+      // transform should be a matrix (translated)
+      expect(transform).not.toBe('none');
     }
   });
 });
@@ -185,8 +180,8 @@ test.describe('Single row behavior', () => {
     await page.waitForTimeout(300);
 
     // With only 3 items at desktop width, no honeycomb offset should be needed
-    const offsetRows = page.locator('.hex-row-offset');
-    await expect(offsetRows).toHaveCount(0);
+    const offsetHexagons = page.locator('.hexagon.hex-offset');
+    await expect(offsetHexagons).toHaveCount(0);
     // All 3 hexagons should be visible
     const hexagons = page.locator('.hexagon');
     await expect(hexagons).toHaveCount(3);
