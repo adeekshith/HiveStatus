@@ -14,7 +14,7 @@
     /* Hexagon Dimensions — scales with viewport, sized for TV dashboard readability */
     --hex-width: clamp(112px, 11.25vw, 275px);
     --hex-height: calc(var(--hex-width) * 1.1547);
-    --hex-margin-x: clamp(3px, 0.4vw, 8px);
+    --hex-margin-x: clamp(1px, 0.15vw, 3px);
     --hex-margin-y: clamp(3px, 0.4vw, 8px);
     --hex-indent: calc(var(--hex-width) / 2 + var(--hex-margin-x));
 
