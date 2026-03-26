@@ -60,7 +60,7 @@ body {
     color: var(--page-text);
     margin: 0;
     padding: 20px 0 60px 0; 
-    font-family: 'Roboto Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -163,7 +163,7 @@ body {
 .hexagon-name {
 	width: 85%;
 	text-align: center;
-	font-family: 'Roboto Condensed', sans-serif;
+	font-family: 'Inter', sans-serif;
 	font-weight: 150;
 	font-size: clamp(12px, 1.1vw, 22px);
 	color: #fff;
