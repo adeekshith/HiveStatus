@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    environment:
+      - APP_GATUS_URL=http://localhost:9999
+      - APP_PAGE_TITLE=HiveStatus Test
+      - APP_PORT=3000
+      - APP_HOST=0.0.0.0
+
+  e2e:
+    build: ./e2e
+    depends_on:
+      - app
+    environment:
+      - BASE_URL=http://app:3000
