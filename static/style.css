@@ -8,6 +8,7 @@
     --xv-gray-light: #c9c9c9;
     --xv-gray-dark: #9fa0a2;
     --xv-green: #16a34a;
+    --xv-green-dark: #0d5c2b;
     --xv-red: #dc2626;
     --xv-red-light: #7d1d1e;
 
@@ -30,6 +31,7 @@
         --xv-gray-light: #30363d;
         --xv-gray-dark: #21262d;
         --xv-green: #2ea043;
+        --xv-green-dark: #165c2b;
         --xv-red: #f85149;
         --xv-red-light: #4a1518;
     }
@@ -76,13 +78,15 @@ body {
     margin-bottom: 40px;
 
     & summary {
-        font-size: clamp(1.5rem, 2.5vw, 3.125rem);
-        font-weight: 700;
+        font-size: clamp(0.85rem, 1.3vw, 1.5rem);
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
         margin-bottom: 20px;
         cursor: pointer;
         list-style: none;
-        color: var(--page-text);
-        border-top: 1px solid var(--meta-text);
+        color: var(--meta-text);
+        border-top: 1px solid color-mix(in srgb, var(--meta-text) 40%, transparent);
         padding-top: 15px;
         display: flex;
         justify-content: center;
@@ -96,7 +100,7 @@ body {
             content: "▾";
             position: absolute;
             right: 0;
-            font-size: 1.5rem;
+            font-size: 1rem;
             transition: transform 0.2s;
         }
     }
@@ -140,8 +144,8 @@ body {
   /* Color States */
   &.hexagon-green {
     background-color: var(--xv-green);
-    .hexagon-inner { background-color: var(--page-bg); }
-    .hexagon-name { color: var(--page-text); }
+    .hexagon-inner { background-color: var(--xv-green-dark); }
+    .hexagon-name { color: rgba(255, 255, 255, 0.95); }
   }
 
   &.hexagon-red {
@@ -164,9 +168,11 @@ body {
 	width: 85%;
 	text-align: center;
 	font-family: 'Inter', sans-serif;
-	font-weight: 150;
-	font-size: clamp(15px, 1.375vw, 28px);
-	color: #fff;
+	font-weight: 500;
+	font-size: clamp(13px, 1.2vw, 24px);
+	color: rgba(255, 255, 255, 0.95);
+	letter-spacing: 0.01em;
+	line-height: 1.25;
     word-break: break-word;
 }
 
