@@ -149,17 +149,36 @@ function layoutHoneycomb(gridContainer) {
     const hexMarginX = resolveVar('--hex-margin-x');
     const cellWidth = hexWidth + 2 * hexMarginX;
     const containerWidth = gridContainer.clientWidth;
-    const perRow = Math.max(2, Math.floor(containerWidth / cellWidth));
+    if (containerWidth === 0 || cellWidth === 0) return;
+    const perRow = Math.max(1, Math.floor(containerWidth / cellWidth));
 
     // Clear existing rows
     gridContainer.innerHTML = '';
 
+    // If everything fits in one row or only 1 per row, no honeycomb offset
+    if (hexagons.length <= perRow || perRow <= 1) {
+        for (let i = 0; i < hexagons.length; i += Math.max(1, perRow)) {
+            const row = document.createElement('div');
+            row.className = 'hex-row';
+            const end = Math.min(i + perRow, hexagons.length);
+            for (let j = i; j < end; j++) {
+                row.appendChild(hexagons[j]);
+            }
+            gridContainer.appendChild(row);
+        }
+        return;
+    }
+
+    // Multiple rows — use honeycomb pattern
     let i = 0;
     let isOffset = false;
     while (i < hexagons.length) {
+        const count = isOffset
+            ? Math.min(perRow - 1, hexagons.length - i)
+            : Math.min(perRow, hexagons.length - i);
+        if (count === 0) { isOffset = !isOffset; continue; }
         const row = document.createElement('div');
         row.className = isOffset ? 'hex-row hex-row-offset' : 'hex-row';
-        const count = isOffset ? Math.min(perRow - 1, hexagons.length - i) : Math.min(perRow, hexagons.length - i);
         for (let j = 0; j < count; j++) {
             row.appendChild(hexagons[i++]);
         }

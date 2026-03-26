@@ -37,13 +37,20 @@ test.describe('Dashboard UI', () => {
     await page.waitForSelector('.hexagon');
   });
 
-  test('renders hexagons with clip-path polygon', async ({ page }) => {
+  test('renders pointy-top hexagons with clip-path polygon', async ({ page }) => {
     const hexagon = page.locator('.hexagon').first();
     const clipPath = await hexagon.evaluate(
       (el) => getComputedStyle(el).clipPath
     );
     // clip-path should be a polygon (browser may normalize the format)
     expect(clipPath).toContain('polygon');
+
+    // Pointy-top hexagons are taller than wide
+    const { width, height } = await hexagon.evaluate((el) => {
+      const rect = el.getBoundingClientRect();
+      return { width: rect.width, height: rect.height };
+    });
+    expect(height).toBeGreaterThan(width);
   });
 
   test('applies green class for successful services', async ({ page }) => {
@@ -115,6 +122,74 @@ test.describe('Dashboard UI', () => {
   test('shows last updated timestamp', async ({ page }) => {
     const lastUpdated = page.locator('#last-updated');
     await expect(lastUpdated).toContainText('Last updated:');
+  });
+
+  test('section heading has border-top divider, not border-bottom', async ({
+    page,
+  }) => {
+    const summary = page.locator('.group-section summary').first();
+    const styles = await summary.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return { borderTop: s.borderTopStyle, borderBottom: s.borderBottomStyle };
+    });
+    expect(styles.borderTop).toBe('solid');
+    expect(styles.borderBottom).toBe('none');
+  });
+
+  test('honeycomb rows interlock vertically', async ({ page }) => {
+    // With 4 core items at 1920px desktop, there should be multiple rows
+    const rows = page.locator(
+      '.group-section:first-of-type .hex-row'
+    );
+    const count = await rows.count();
+    if (count >= 2) {
+      // Second row should have negative margin-top (interlocking)
+      const marginTop = await rows.nth(1).evaluate(
+        (el) => parseFloat(getComputedStyle(el).marginTop)
+      );
+      expect(marginTop).toBeLessThan(0);
+    }
+  });
+});
+
+test.describe('Single row behavior', () => {
+  test.skip(({ viewport }) => viewport!.width < 800, 'desktop only');
+
+  test('uses single row when all items fit', async ({ page }) => {
+    // Override the default route mocks — only 3 services in one group
+    await page.route('**/api/config', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          page_title: 'Test',
+          gatus_url: 'http://mock',
+          refresh_interval_ms: 60000,
+        }),
+      })
+    );
+    await page.route('**/api/statuses', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          { name: 'A', key: 'grp_a', results: [{ success: true }] },
+          { name: 'B', key: 'grp_b', results: [{ success: true }] },
+          { name: 'C', key: 'grp_c', results: [{ success: true }] },
+        ]),
+      })
+    );
+    await page.goto('/');
+    await page.waitForSelector('.hexagon');
+    // Wait for layout to stabilize
+    await page.waitForTimeout(300);
+
+    // With only 3 items at desktop width, no honeycomb offset should be needed
+    const offsetRows = page.locator('.hex-row-offset');
+    await expect(offsetRows).toHaveCount(0);
+    // All 3 hexagons should be visible
+    const hexagons = page.locator('.hexagon');
+    await expect(hexagons).toHaveCount(3);
   });
 });
 

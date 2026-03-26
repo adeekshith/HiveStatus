@@ -13,13 +13,13 @@
 
     /* Hexagon Dimensions — scales with viewport */
     --hex-width: clamp(90px, 9vw, 220px);
-    --hex-height: calc(var(--hex-width) * 0.866);
+    --hex-height: calc(var(--hex-width) * 1.1547);
     --hex-margin-x: clamp(2px, 0.3vw, 6px);
     --hex-margin-y: clamp(2px, 0.3vw, 6px);
     --hex-indent: calc(var(--hex-width) / 2 + var(--hex-margin-x));
 
-    /* Hexagon Shape */
-    --hex-clip: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    /* Pointy-top hexagon shape */
+    --hex-clip: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -82,8 +82,8 @@ body {
         cursor: pointer;
         list-style: none;
         color: var(--page-text);
-        border-bottom: 1px solid var(--meta-text);
-        padding-bottom: 10px;
+        border-top: 1px solid var(--meta-text);
+        padding-top: 15px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -121,6 +121,10 @@ body {
     justify-content: center;
 }
 
+.hex-row + .hex-row {
+    margin-top: calc(var(--hex-height) * -0.25 + var(--hex-margin-y));
+}
+
 .hex-row-offset {
     transform: translateX(calc(var(--hex-width) / 2 + var(--hex-margin-x)));
 }
@@ -131,7 +135,7 @@ body {
   width: var(--hex-width);
   height: var(--hex-height);
   background-color: var(--xv-gray-dark);
-  margin: var(--hex-margin-y) var(--hex-margin-x);
+  margin: 0 var(--hex-margin-x);
   clip-path: var(--hex-clip);
   display: flex;
   justify-content: center;
