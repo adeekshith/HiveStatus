@@ -157,7 +157,7 @@ body {
 .hexagon-inner {
   width: 94%;
   height: 94%;
-  background-color: var(--xv-gray-light);
+  background-color: var(--xv-gray-dark);
   clip-path: var(--hex-clip);
   display: flex;
   justify-content: center;
