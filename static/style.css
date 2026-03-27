@@ -12,6 +12,14 @@
     --xv-red: #dc2626;
     --xv-red-light: #7d1d1e;
 
+    /* Hexagon border (outer) = darker, fill (inner) = lighter in light mode */
+    --hex-gray-border: var(--xv-gray-dark);
+    --hex-gray-fill: var(--xv-gray-light);
+    --hex-green-border: var(--xv-green-dark);
+    --hex-green-fill: var(--xv-green);
+    --hex-red-border: var(--xv-red-light);
+    --hex-red-fill: var(--xv-red);
+
     /* Hexagon Dimensions — scales with viewport, sized for TV dashboard readability */
     --hex-width: clamp(112px, 11.25vw, 275px);
     --hex-height: calc(var(--hex-width) * 1.1547);
@@ -34,6 +42,14 @@
         --xv-green-dark: #165c2b;
         --xv-red: #f85149;
         --xv-red-light: #4a1518;
+
+        /* Dark mode: solid color (border = fill) */
+        --hex-gray-border: var(--xv-gray-dark);
+        --hex-gray-fill: var(--xv-gray-dark);
+        --hex-green-border: var(--xv-green);
+        --hex-green-fill: var(--xv-green);
+        --hex-red-border: var(--xv-red);
+        --hex-red-fill: var(--xv-red);
     }
 }
 
@@ -134,7 +150,7 @@ body {
   position: relative;
   width: var(--hex-width);
   height: var(--hex-height);
-  background-color: var(--xv-gray-dark);
+  background-color: var(--hex-gray-border);
   margin: var(--hex-margin-y) var(--hex-margin-x);
   clip-path: var(--hex-clip);
   display: flex;
@@ -143,21 +159,21 @@ body {
 
   /* Color States */
   &.hexagon-green {
-    background-color: var(--xv-green);
-    .hexagon-inner { background-color: var(--xv-green); }
+    background-color: var(--hex-green-border);
+    .hexagon-inner { background-color: var(--hex-green-fill); }
     .hexagon-name { color: rgba(255, 255, 255, 0.95); }
   }
 
   &.hexagon-red {
-    background-color: var(--xv-red);
-    .hexagon-inner { background-color: var(--xv-red); }
+    background-color: var(--hex-red-border);
+    .hexagon-inner { background-color: var(--hex-red-fill); }
   }
 }
 
 .hexagon-inner {
   width: 94%;
   height: 94%;
-  background-color: var(--xv-gray-dark);
+  background-color: var(--hex-gray-fill);
   clip-path: var(--hex-clip);
   display: flex;
   justify-content: center;
