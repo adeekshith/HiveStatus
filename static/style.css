@@ -144,13 +144,13 @@ body {
   /* Color States */
   &.hexagon-green {
     background-color: var(--xv-green);
-    .hexagon-inner { background-color: var(--xv-green-dark); }
+    .hexagon-inner { background-color: var(--xv-green); }
     .hexagon-name { color: rgba(255, 255, 255, 0.95); }
   }
 
   &.hexagon-red {
     background-color: var(--xv-red);
-    .hexagon-inner { background-color: var(--xv-red-light); }
+    .hexagon-inner { background-color: var(--xv-red); }
   }
 }
 
