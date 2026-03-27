@@ -12,13 +12,13 @@
     --xv-red: #dc2626;
     --xv-red-light: #7d1d1e;
 
-    /* Hexagon border (outer) = darker, fill (inner) = lighter in light mode */
-    --hex-gray-border: var(--xv-gray-dark);
-    --hex-gray-fill: var(--xv-gray-light);
-    --hex-green-border: var(--xv-green-dark);
-    --hex-green-fill: var(--xv-green);
-    --hex-red-border: var(--xv-red-light);
-    --hex-red-fill: var(--xv-red);
+    /* Light mode: outer hex (border ring) = darker, inner hex (fill) = lighter */
+    --hex-gray-border: #9fa0a2;
+    --hex-gray-fill: #c9c9c9;
+    --hex-green-border: #0d5c2b;
+    --hex-green-fill: #16a34a;
+    --hex-red-border: #7d1d1e;
+    --hex-red-fill: #dc2626;
 
     /* Hexagon Dimensions — scales with viewport, sized for TV dashboard readability */
     --hex-width: clamp(112px, 11.25vw, 275px);
@@ -43,13 +43,13 @@
         --xv-red: #f85149;
         --xv-red-light: #4a1518;
 
-        /* Dark mode: solid color (border = fill) */
-        --hex-gray-border: var(--xv-gray-dark);
-        --hex-gray-fill: var(--xv-gray-dark);
-        --hex-green-border: var(--xv-green);
-        --hex-green-fill: var(--xv-green);
-        --hex-red-border: var(--xv-red);
-        --hex-red-fill: var(--xv-red);
+        /* Dark mode: brighter border ring, darker fill */
+        --hex-gray-border: #30363d;
+        --hex-gray-fill: #21262d;
+        --hex-green-border: #2ea043;
+        --hex-green-fill: #165c2b;
+        --hex-red-border: #f85149;
+        --hex-red-fill: #4a1518;
     }
 }
 
